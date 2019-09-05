@@ -43,6 +43,7 @@
 
     <ItemGroup>
       <ItemsToPushToBlobFeed Include="@(_InstallersToPublish)">
+        <ExcludeFromManifest>true</ExcludeFromManifest>
         <IsShipping>false</IsShipping>
         <ManifestArtifactData>ShipInstaller=dotnetcli</ManifestArtifactData>
         <RelativeBlobPath>$(_UploadPathRoot)/%(_InstallersToPublish.UploadPathSegment)/$(_PackageVersion)/%(Filename)%(Extension)</RelativeBlobPath>
