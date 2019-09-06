@@ -3,6 +3,10 @@ import { getFileNameFromUrl } from '../Url';
 import { attachDebuggerHotkey, hasDebuggingEnabled } from './MonoDebugger';
 import { showErrorNotification } from '../../BootErrors';
 
+declare namespace FS {
+    function createDataFile(parent: string, name: string, data: Uint8Array, canRead: boolean, canWrite: boolean, canOwn: boolean): void;
+}
+
 const assemblyHandleCache: { [assemblyName: string]: number } = {};
 const typeHandleCache: { [fullyQualifiedTypeName: string]: number } = {};
 const methodHandleCache: { [fullyQualifiedMethodName: string]: MethodHandle } = {};
@@ -288,6 +292,7 @@ function createEmscriptenModuleInstance(loadAssemblyUrls: string[], onReady: () 
           heapMemory.set(data);
           mono_wasm_add_assembly(filename, heapAddress, data.length);
           MONO.loaded_files.push(toAbsoluteUrl(url));
+            FS.createDataFile("/tmp", filename, heapMemory, true, true, true);
           removeRunDependency(runDependencyId);
         },
         errorInfo => {
