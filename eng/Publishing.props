@@ -43,7 +43,6 @@
 
     <ItemGroup>
       <ItemsToPushToBlobFeed Include="@(_InstallersToPublish)">
-        <ExcludeFromManifest>true</ExcludeFromManifest>
         <IsShipping>false</IsShipping>
         <ManifestArtifactData>ShipInstaller=dotnetcli</ManifestArtifactData>
         <PublishFlatContainer>true</PublishFlatContainer>
