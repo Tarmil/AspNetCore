@@ -30,7 +30,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         protected override void InitializeAsyncCore()
         {
             Navigate(ServerPathBase);
-            MountTestComponent<CulturePicker>();
+            Browser.MountTestComponent<CulturePicker>();
             WaitUntilExists(By.Id("culture-selector"));
         }
 
@@ -45,7 +45,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             selector.SelectByValue(culture);
 
             // That should have triggered a redirect, wait for the main test selector to come up.
-            MountTestComponent<GlobalizationBindCases>();
+            Browser.MountTestComponent<GlobalizationBindCases>();
             WaitUntilExists(By.Id("globalization-cases"));
 
             var cultureDisplay = WaitUntilExists(By.Id("culture-name-display"));
@@ -117,7 +117,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             selector.SelectByValue(culture);
 
             // That should have triggered a redirect, wait for the main test selector to come up.
-            MountTestComponent<GlobalizationBindCases>();
+            Browser.MountTestComponent<GlobalizationBindCases>();
             WaitUntilExists(By.Id("globalization-cases"));
 
             var cultureDisplay = WaitUntilExists(By.Id("culture-name-display"));
@@ -183,7 +183,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             selector.SelectByValue(culture);
 
             // That should have triggered a redirect, wait for the main test selector to come up.
-            MountTestComponent<GlobalizationBindCases>();
+            Browser.MountTestComponent<GlobalizationBindCases>();
             WaitUntilExists(By.Id("globalization-cases"));
 
             var cultureDisplay = WaitUntilExists(By.Id("culture-name-display"));
