@@ -47,6 +47,30 @@ namespace Microsoft.AspNetCore.E2ETesting
         public static void Exists(this IWebDriver driver, By finder, TimeSpan timeout)
             => WaitAssertCore(driver, () => Assert.NotEmpty(driver.FindElements(finder)), timeout);
 
+        public static IWebElement WaitUntilExists(this IWebDriver driver, By findBy) =>
+            WaitUntilExists(driver, findBy, default);
+
+        public static IWebElement WaitUntilExists(this IWebDriver driver, By findBy, TimeSpan timeout)
+        {
+            WaitAssertCore(driver, () =>
+            {
+                IReadOnlyList<LogEntry> errors = null;
+                if (driver.Manage().Logs.AvailableLogTypes.Contains(LogType.Browser))
+                {
+                    // Fail-fast if any errors were logged to the console.
+                    errors = driver.GetBrowserLogs(LogLevel.Severe);
+                    if (errors.Count > 0)
+                    {
+                        throw new BrowserLogErrorsException();
+                    }
+                }
+
+                Assert.NotEmpty(driver.FindElements(findBy));
+            }, timeout);
+
+            return driver.FindElements(findBy)[0];
+        }
+
         private static void WaitAssertCore(IWebDriver driver, Action assertion, TimeSpan timeout = default)
         {
             if (timeout == default)
@@ -64,14 +88,14 @@ namespace Microsoft.AspNetCore.E2ETesting
                         assertion();
                         return true;
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         lastException = e;
                         return false;
                     }
                 });
             }
-            catch (WebDriverTimeoutException)
+            catch (Exception e) when (e is BrowserLogErrorsException || e is WebDriverTimeoutException)
             {
                 var errors = driver.GetBrowserLogs(LogLevel.Severe);
                 if (errors.Count > 0)
@@ -88,6 +112,10 @@ namespace Microsoft.AspNetCore.E2ETesting
                     assertion();
                 }
             }
+        }
+
+        private class BrowserLogErrorsException : Exception
+        {
         }
     }
 }
