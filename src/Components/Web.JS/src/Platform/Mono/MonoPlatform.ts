@@ -3,6 +3,10 @@ import { showErrorNotification } from '../../BootErrors';
 import { WebAssemblyResourceLoader, LoadingResource } from '../WebAssemblyResourceLoader';
 import { Platform, System_Array, Pointer, System_Object, System_String } from '../Platform';
 
+declare namespace FS {
+    function createDataFile(parent: string, name: string, data: Uint8Array, canRead: boolean, canWrite: boolean, canOwn: boolean): void;
+}
+
 let mono_string_get_utf8: (managedString: System_String) => Pointer;
 let mono_wasm_add_assembly: (name: string, heapAddress: number, length: number) => void;
 const appBinDirName = 'appBinDir';
@@ -275,6 +279,10 @@ function createEmscriptenModuleInstance(resourceLoader: WebAssemblyResourceLoade
       heapMemory.set(data);
       mono_wasm_add_assembly(loadAsName, heapAddress, data.length);
       MONO.loaded_files.push(toAbsoluteUrl(dependency.url));
+      if (!loadAsName.endsWith('FSharp.Core.resources.dll'))
+      {
+        FS.createDataFile("/tmp", loadAsName, heapMemory, true, true, true);
+      }
     } catch (errorInfo) {
         onError(errorInfo);
         return;
